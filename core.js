@@ -88,6 +88,24 @@ parse = (text) => {
     return trees
 }
 
-egText = "Print(2)\nPrint('nice');Print(Add(2, 3))"
-console.log(JSON.stringify(parse(egText)))
+execute = (tree) => {
+    let functionName = Object.keys(tree)[0]
+    let args = tree[functionName][0]
+    if (typeof args == "string") {
+        args = [args]
+    }
+    if (typeof args == "object") {
+        args = args.map((arg) => {
+            if (typeof arg == "object") {
+                return execute(arg)
+            }
+            return arg
+        })
+    }
+    return functions[functionName](args)
+}
 
+
+egText = "Print(2)\nPrint('nice');Print(Add(Add(3, 4))))"
+console.log(JSON.stringify(parse(egText)))
+execute(parse(egText)[0])
